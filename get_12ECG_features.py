@@ -137,8 +137,19 @@ def findpeaks(data, spacing=1, limit=None):
             ind = ind[data[ind] > limit]
         return ind
 
+import pandas as pd
+import neurokit2 as nk
 
 def get_12ECG_features(data, header_data):
+  df = pd.DataFrame(data).T
+
+  processed_data2, info2 = nk.bio_process(ecg=df[0], sampling_rate=500)
+  results2 = nk.bio_analyze(processed_data2, sampling_rate=500)
+  # results2['label'] = header_data[-4][5:-1]
+  return results2.replace([pd.np.inf, -pd.np.inf], pd.np.NaN).fillna(0).values.flatten()
+
+
+def get_12ECG_features_orig(data, header_data):
 
     tmp_hea = header_data[0].split(' ')
     ptID = tmp_hea[0]
